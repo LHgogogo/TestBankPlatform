@@ -25,6 +25,8 @@ export default {
   'menu.organizationManage': '组织管理',
   'menu.organizationManage.school': '学校管理',
   'menu.organizationManage.person': '人员管理',
+  // 'menu.organizationManage.schoolNew': '新增学校',
+  // 'menu.organizationManage.schoolDetail': '学校详情',
   // 系统配置tab
   'menu.systemConfig': '系统配置',
   'menu.systemConfig.authority': '权限配置',

@@ -1,13 +1,26 @@
 import { Button, Table } from 'antd';
 import React, { useState, useCallback, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { getSchool } from '@/pages/OrgManagement/service';
+import { history } from 'umi'
 import styles from './style.less';
 
+console.log(history);
+const toDetail = (data) => {
+  // history.push(`./school/${data.id}`)
+  history.push({
+    pathname: `./school/schoolDetail`,
+    name: 'schoolDetail',
+    query: {
+      id: data.id
+    }
+  })
+}
 const columns = [
   {
     title: '学校名称',
-    dataIndex: 'school',
-    key: 'school',
+    dataIndex: 'name',
+    key: 'name',
   },
   {
     title: '状态',
@@ -32,146 +45,77 @@ const columns = [
   },
   {
     title: '人员账号数',
-    dataIndex: 'number',
-    key: 'number',
+    dataIndex: 'accountsNum',
+    key: 'accountsNum',
   },
   {
     title: '生效时间',
-    key: 'date',
-    dataIndex: 'date',
+    key: 'effectiveTime',
+    dataIndex: 'effectiveTime',
   },
   {
     title: 'Action',
     key: 'action',
     render: (text, record) => {
-      // console.log(record)
       return (
         <span>
-          <a>详情</a>
+          <a onClick={() => toDetail(record)}>详情</a>
         </span>
       )
     },
   },
 ];
-const TableData = [
-  {
-    id: 233,
-    school: '杭二中',
-    status: 0,
-    number: 23,
-    date: '2020-10-01 至 2022-10-01',
-  },
-  {
-    id: 234,
-    school: '外国语',
-    status: 1,
-    number: 2223,
-    date: '2020-10-01 至 2022-10-11',
-  },
-  {
-    id: 235,
-    school: '杭二中',
-    status: 0,
-    number: 23,
-    date: '2020-10-01 至 2022-10-01',
-  },
-  {
-    id: 236,
-    school: '外国语',
-    status: 1,
-    number: 2223,
-    date: '2020-10-01 至 2022-10-11',
-  },
-  {
-    id: 237,
-    school: '杭二中',
-    status: 0,
-    number: 23,
-    date: '2020-10-01 至 2022-10-01',
-  },
-  {
-    id: 238,
-    school: '外国语',
-    status: 1,
-    number: 2223,
-    date: '2020-10-01 至 2022-10-11',
-  },
-  {
-    id: 239,
-    school: '杭二中',
-    status: 0,
-    number: 23,
-    date: '2020-10-01 至 2022-10-01',
-  },
-  {
-    id: 244,
-    school: '外国语',
-    status: 1,
-    number: 2223,
-    date: '2020-10-01 至 2022-10-11',
-  },
-  {
-    id: 243,
-    school: '杭二中',
-    status: 0,
-    number: 23,
-    date: '2020-10-01 至 2022-10-01',
-  },
-  {
-    id: 254,
-    school: '外国语',
-    status: 1,
-    number: 2223,
-    date: '2020-10-01 至 2022-10-11',
-  },
-  {
-    id: 253,
-    school: '杭二中',
-    status: 0,
-    number: 23,
-    date: '2020-10-01 至 2022-10-01',
-  },
-  {
-    id: 264,
-    school: '外国语',
-    status: 1,
-    number: 2223,
-    date: '2020-10-01 至 2022-10-11',
-  }
 
-]
-const SchoolManagement = () => {
-  const [tableData, setTableData] = useState([])
+const getSchoolList = async (data) => {
+  const res = await getSchool(data)
+  // console.log(res)
+  if (res.code < 300) {
+    return res.data
+  }
+  return null
+}
+const IndexHtml = () => {
+  const [schoolData, setSchoolData] = useState([]);
   const [total, setTotal] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [pageNum, setPageNum] = useState(1)
+  const [loading, setLoading] = useState(false)
   const handleAdd = useCallback(
     () => {
-      console.log('handleAdd');
+      history.push({
+        pathname: `./school/new`,
+        name: 'schoolNew'
+      })
     },
     []
   )
   const handlePageChange = useCallback(
-    (page, pageSize) => {
-      console.log(page);
-      console.log(pageSize);
+    (page) => {
+      setPageNum(page)
     },
     []
   )
   const handleSizeChange = useCallback(
     (current, size) => {
-      console.log(current);
-      console.log(size);
+      setPageNum(current)
+      setPageSize(size)
     },
     []
   )
   useEffect(() => {
-    const res = { code: 200, data: TableData, total: TableData.length }
-    if (res.code < 300) {
-      setTableData(res.data)
-      setTotal(res.total)
+    const theData = {
+      pageNum,
+      pageSize
     }
-    return () => {
-    }
-  }, [])
+    setLoading(true)
+    getSchoolList(theData).then(res => {
+      setLoading(false)
+      if (res.records) {
+        setSchoolData(res.records)
+        setTotal(res.total)
+      }
+    })
+  }, [pageNum, pageSize]);
   const pagination = {
     showQuickJumper: true,
     showSizeChanger: true,
@@ -186,7 +130,7 @@ const SchoolManagement = () => {
         <div style={{ textAlign: 'right', marginTop: 15, marginBottom: 15 }}>
           <Button type="primary" onClick={handleAdd}>新增学校</Button>
         </div>
-        <Table scroll={{ x: true }} columns={columns} dataSource={tableData} rowKey="id" pagination={
+        <Table loading={loading} scroll={{ x: 600 }} columns={columns} dataSource={schoolData} rowKey="id" pagination={
           pagination
         } />
       </div>
@@ -194,4 +138,4 @@ const SchoolManagement = () => {
   );
 };
 
-export default SchoolManagement;
+export default IndexHtml;

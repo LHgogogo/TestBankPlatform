@@ -1,9 +1,13 @@
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
+import {
+  defineConfig
+} from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
-const { REACT_APP_ENV } = process.env;
+const {
+  REACT_APP_ENV
+} = process.env;
 export default defineConfig({
   hash: true,
   antd: {},
@@ -24,28 +28,23 @@ export default defineConfig({
     ie: 11,
   },
   // umi routes: https://umijs.org/docs/routing
-  routes: [
-    {
+  routes: [{
       path: '/user',
       component: '../layouts/UserLayout',
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
+      routes: [{
+        name: 'login',
+        path: '/user/login',
+        component: './user/login',
+      }, ],
     },
     {
       path: '/',
       component: '../layouts/SecurityLayout',
-      routes: [
-        {
+      routes: [{
           path: '/',
           component: '../layouts/BasicLayout',
           authority: ['admin', 'user'],
-          routes: [
-            {
+          routes: [{
               path: '/',
               redirect: '/welcome',
             },
@@ -61,15 +60,13 @@ export default defineConfig({
               icon: 'crown',
               component: './Admin',
               authority: ['admin'],
-              routes: [
-                {
-                  path: '/admin/sub-page',
-                  name: 'sub-page',
-                  icon: 'smile',
-                  component: './Welcome',
-                  authority: ['admin'],
-                },
-              ],
+              routes: [{
+                path: '/admin/sub-page',
+                name: 'sub-page',
+                icon: 'smile',
+                component: './Welcome',
+                authority: ['admin'],
+              }, ],
             },
             {
               name: 'list.table-list',
@@ -82,8 +79,7 @@ export default defineConfig({
               path: '/dataAnalysis',
               name: 'dataAnalysis',
               icon: 'area-chart',
-              routes: [
-                {
+              routes: [{
                   path: '/dataAnalysis/managementData',
                   name: 'managementData',
                   icon: 'bar-chart',
@@ -108,8 +104,7 @@ export default defineConfig({
               path: '/questionBank',
               name: 'questionBank',
               icon: 'bank',
-              routes: [
-                {
+              routes: [{
                   path: '/questionBank/share',
                   name: 'share',
                   icon: 'share-alt',
@@ -140,8 +135,7 @@ export default defineConfig({
               path: '/auditManage',
               name: 'auditManage',
               icon: 'audit',
-              routes: [
-                {
+              routes: [{
                   path: '/auditManage/publishAudit',
                   name: 'publishAudit',
                   icon: 'file-protect',
@@ -160,8 +154,7 @@ export default defineConfig({
               path: '/organizationManage',
               name: 'organizationManage',
               icon: 'reconciliation',
-              routes: [
-                {
+              routes: [{
                   path: '/organizationManage/school',
                   name: 'school',
                   icon: 'read',
@@ -173,6 +166,16 @@ export default defineConfig({
                   icon: 'idcard',
                   component: './OrgManagement/personManagement'
                 },
+                {
+                  path: '/organizationManage/school/schoolDetail' + {
+                    id
+                  },
+                  component: './OrgManagement/schoolDetail',
+                },
+                {
+                  path: '/organizationManage/school/new',
+                  component: './OrgManagement/schoolNew',
+                },
               ],
             },
             // 系统配置tab
@@ -180,8 +183,7 @@ export default defineConfig({
               path: '/systemConfig',
               name: 'systemConfig',
               icon: 'sliders',
-              routes: [
-                {
+              routes: [{
                   path: '/systemConfig/authority',
                   name: 'authority',
                   icon: 'cluster',

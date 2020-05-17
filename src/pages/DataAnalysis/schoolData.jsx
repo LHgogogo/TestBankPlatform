@@ -1,9 +1,18 @@
 import React from 'react';
-import { Card, Typography, Alert } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import styles from './style.less';
+import SchoolView from './components/schoolView';
 
+const IndexHtml = () => {
 
-export default () => (
-  <div>
-    schoolData
-  </div>
-);
+  return (
+    <>
+      <PageHeaderWrapper />
+      <div className={styles.bg} >
+        <SchoolView id="schoolView" />
+      </div>
+    </>
+  );
+};
+
+export default IndexHtml;

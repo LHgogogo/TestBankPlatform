@@ -1,5 +1,5 @@
-import { Tabs } from 'antd';
-import React, { useState, useRef, useEffect } from 'react';
+// import { Tabs } from 'antd';
+import React, { useEffect } from 'react';
 import styles from './barStyle.less';
 // 引入 ECharts 主模块
 const echarts = require('echarts/lib/echarts');
@@ -12,9 +12,10 @@ require('echarts/lib/component/title');
 const Bar = (data) => {
   useEffect(() => {
     const myChart = echarts.init(document.getElementById(`${data.id}`));
+    const { chartData } = data
     const opt = {
       title: {
-        text: '已发布题目统计 / 共享作业卷统计'
+        text: chartData.title
       },
       color: ['#3398DB'],
       tooltip: {
@@ -32,7 +33,7 @@ const Bar = (data) => {
       xAxis: [
         {
           type: 'category',
-          data: ['语文', '数学', '英语', '科学', '语文', '数学', '英语'],
+          data: chartData.xAxis,
           axisTick: {
             alignWithLabel: true
           },
@@ -56,7 +57,7 @@ const Bar = (data) => {
           name: '直接访问',
           type: 'bar',
           barWidth: '60%',
-          data: [10, 52, 200, 334, 390, 330, 220]
+          data: chartData.dataSource,
         }
       ]
     }
@@ -64,7 +65,7 @@ const Bar = (data) => {
   }, [])
   return (
     <>
-      {data && <div id={data.id} className={styles.bar} />}
+      {data && <div id={data.id} className={styles.bar} style={{ ...data.style }} />}
     </>
   );
 };

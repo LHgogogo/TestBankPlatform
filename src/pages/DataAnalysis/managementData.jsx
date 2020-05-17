@@ -1,11 +1,12 @@
 import { Tabs } from 'antd';
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from './style.less';
 import DataView from './components/dataView';
+import PerView from './components/perView';
 
 const { TabPane } = Tabs;
-const ManagementData = () => {
+const IndexHtml = () => {
 
   return (
     <>
@@ -15,11 +16,11 @@ const ManagementData = () => {
           <DataView id="runView" />
         </TabPane>
         <TabPane tab="用户使用数据" key="2">
-          <DataView id="perView" />
+          <PerView id="perView" />
         </TabPane>
       </Tabs>
     </>
   );
 };
 
-export default ManagementData;
+export default IndexHtml;

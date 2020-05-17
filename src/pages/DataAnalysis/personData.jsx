@@ -1,9 +1,18 @@
 import React from 'react';
-import { Card, Typography, Alert } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import styles from './style.less';
+import PersonalView from './components/personalView';
 
+const IndexHtml = () => {
 
-export default () => (
-  <div>
-    personData
-  </div>
-);
+  return (
+    <>
+      <PageHeaderWrapper />
+      <div className={styles.bg} >
+        <PersonalView id="personalView" />
+      </div>
+    </>
+  );
+};
+
+export default IndexHtml;
