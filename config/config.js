@@ -82,25 +82,24 @@ export default defineConfig({
               path: '/dataAnalysis',
               name: 'dataAnalysis',
               icon: 'area-chart',
-              component: './Admin',
               routes: [
                 {
                   path: '/dataAnalysis/managementData',
                   name: 'managementData',
                   icon: 'bar-chart',
-                  component: './Welcome'
+                  component: './DataAnalysis/managementData'
                 },
                 {
                   path: '/dataAnalysis/schoolData',
                   name: 'schoolData',
                   icon: 'dot-chart',
-                  component: './Welcome'
+                  component: './DataAnalysis/schoolData'
                 },
                 {
                   path: '/dataAnalysis/personData',
                   name: 'personData',
                   icon: 'line-chart',
-                  component: './Welcome'
+                  component: './DataAnalysis/personData'
                 },
               ],
             },
@@ -109,7 +108,6 @@ export default defineConfig({
               path: '/questionBank',
               name: 'questionBank',
               icon: 'bank',
-              component: './Admin',
               routes: [
                 {
                   path: '/questionBank/share',
@@ -142,7 +140,6 @@ export default defineConfig({
               path: '/auditManage',
               name: 'auditManage',
               icon: 'audit',
-              component: './Admin',
               routes: [
                 {
                   path: '/auditManage/publishAudit',
@@ -163,19 +160,18 @@ export default defineConfig({
               path: '/organizationManage',
               name: 'organizationManage',
               icon: 'reconciliation',
-              component: './Admin',
               routes: [
                 {
                   path: '/organizationManage/school',
                   name: 'school',
                   icon: 'read',
-                  component: './Welcome'
+                  component: './OrgManagement/schoolManagement'
                 },
                 {
                   path: '/organizationManage/person',
                   name: 'person',
                   icon: 'idcard',
-                  component: './Welcome'
+                  component: './OrgManagement/personManagement'
                 },
               ],
             },
@@ -184,7 +180,6 @@ export default defineConfig({
               path: '/systemConfig',
               name: 'systemConfig',
               icon: 'sliders',
-              component: './Admin',
               routes: [
                 {
                   path: '/systemConfig/authority',
