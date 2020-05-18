@@ -1,5 +1,5 @@
 import { Button, Table } from 'antd';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { getSchool } from '@/pages/OrgManagement/service';
 import { history } from 'umi'
@@ -116,13 +116,15 @@ const IndexHtml = () => {
       }
     })
   }, [pageNum, pageSize]);
-  const pagination = {
-    showQuickJumper: true,
-    showSizeChanger: true,
-    onChange: handlePageChange,
-    onShowSizeChange: handleSizeChange,
-    total,
-  }
+  const pagination = useMemo(() => {
+    return {
+      showQuickJumper: true,
+      showSizeChanger: true,
+      onChange: handlePageChange,
+      onShowSizeChange: handleSizeChange,
+      total,
+    }
+  }, [handlePageChange, handleSizeChange, total])
   return (
     <>
       <PageHeaderWrapper />
