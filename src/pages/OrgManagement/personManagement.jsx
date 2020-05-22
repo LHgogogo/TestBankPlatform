@@ -1,139 +1,78 @@
-import { Button, Table } from 'antd';
+import { Button, Table, Modal } from 'antd';
 import React, { useState, useCallback, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { getAccounts } from '@/pages/OrgManagement/service';
 import styles from './style.less';
 
-const TableData = [
-  {
-    id: 233,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 234,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 235,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 236,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 237,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 238,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 239,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 244,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 243,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 254,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 253,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
-  },
-  {
-    id: 264,
-    nickname: '杭二中',
-    phone: 15878822333,
-    subject: '科学',
-    creattime: '2020-10-01 12:12',
-    role: '教师',
+const getAccountsList = async (data) => {
+  const res = await getAccounts(data)
+  // console.log(res)
+  if (res.code < 300) {
+    return res.data
   }
-
-]
+  return null
+}
 const SchoolManagement = () => {
-  const [tableData, setTableData] = useState([])
+  const [accounts, setAccounts] = useState([]);
+  const [accountData, setAccountData] = useState();
   const [total, setTotal] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [pageNum, setPageNum] = useState(1)
+  const [loading, setLoading] = useState(false)
   const handleImport = useCallback(
     () => {
       console.log('handleAdd');
     },
     []
   )
+  const handleDelOk = useCallback(
+    () => {
+      console.log('handleDelOk')
+    },
+    []
+  )
+  const handleCancel = useCallback(
+    () => {
+      setAccountData(null)
+    },
+    []
+  )
   const handlePageChange = useCallback(
-    (page, pageSize) => {
-      console.log(page);
-      console.log(pageSize);
+    (page) => {
+      setPageNum(page)
     },
     []
   )
   const handleSizeChange = useCallback(
     (current, size) => {
-      console.log(current);
-      console.log(size);
+      setPageNum(current)
+      setPageSize(size)
     },
     []
   )
+  const confirm = useCallback((data) => {
+    console.log(data)
+    setAccountData(data)
+    Modal.confirm({
+      title: '提示',
+      content: '是否删除角色',
+      onOk: handleDelOk,
+      onCancel: handleCancel
+    });
+  }, []);
   useEffect(() => {
-    const res = { code: 200, data: TableData, total: TableData.length }
-    if (res.code < 300) {
-      setTableData(res.data)
+    setLoading(true)
+    const theData = {
+      pageNum,
+      pageSize,
+    }
+    getAccountsList(theData).then(res => {
+      console.log(res);
+      setAccounts(res.records)
       setTotal(res.total)
-    }
-    return () => {
-    }
-  }, [])
+      setLoading(false)
+    })
+  }, [pageNum, pageSize])
   const pagination = {
     showQuickJumper: true,
     showSizeChanger: true,
@@ -144,8 +83,8 @@ const SchoolManagement = () => {
   const columns = [
     {
       title: '昵称',
-      dataIndex: 'nickname',
-      key: 'nickname',
+      dataIndex: 'nick',
+      key: 'nick',
     },
     {
       title: '手机号',
@@ -153,19 +92,19 @@ const SchoolManagement = () => {
       key: 'phone',
     },
     {
-      title: '科目年纪',
-      dataIndex: 'subject',
-      key: 'subject',
+      title: '科目年级',
+      dataIndex: 'subjectInfo',
+      key: 'subjectInfo',
     },
     {
       title: '创建时间',
-      key: 'creattime',
-      dataIndex: 'creattime',
+      dataIndex: 'createTime',
+      key: 'createTime',
     },
     {
       title: '角色',
-      key: 'role',
       dataIndex: 'role',
+      key: 'role',
     },
     {
       title: '操作',
@@ -175,7 +114,7 @@ const SchoolManagement = () => {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
             <a>角色变更</a>
-            <a>删除</a>
+            <a onClick={() => confirm(record)}>删除</a>
           </div>
         )
       },
@@ -188,7 +127,7 @@ const SchoolManagement = () => {
         <div style={{ textAlign: 'left', marginTop: 15, marginBottom: 15 }}>
           <Button type="primary" onClick={handleImport}>导入</Button>
         </div>
-        <Table scroll={{ x: true }} columns={columns} dataSource={tableData} rowKey="id" pagination={
+        <Table loading={loading} scroll={{ x: 600 }} columns={columns} dataSource={accounts} rowKey="id" pagination={
           pagination
         } />
       </div>
