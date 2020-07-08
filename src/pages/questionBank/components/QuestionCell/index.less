@@ -1,0 +1,60 @@
+.cell {
+  display:flex;
+  justify-content: space-between;
+  align-content: flex-start;
+  .content {
+    padding: 5px 5px;
+    .title {
+      display:flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 14px;
+    }
+    .question {
+      font-size: 13px;
+      color: #333333;
+    }
+    .picture {
+      display:flex;
+      justify-content: start;
+      img {
+        width: 100px;
+        height: 100px;
+        padding: 0 5px;
+      }
+    }
+    .select {
+      display:flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #333333;
+    }
+    .labels {
+      display:flex;
+      justify-content: start;
+      span {
+        padding: 0 10px;
+      }
+    }
+  }
+  .left {
+    flex-grow: 1;
+  }
+  .right {
+    width: 300px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .operate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      div {
+        white-space: nowrap;
+      }
+    }
+  }
+}
+.cell + .cell {
+  border-top: solid #dddddd 1px;
+}

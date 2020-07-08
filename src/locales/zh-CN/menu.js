@@ -15,6 +15,7 @@ export default {
   'menu.questionBank': '题库运营',
   'menu.questionBank.share': '共享作业卷',
   'menu.questionBank.manage': '题库管理',
+  'menu.questionBank.detail': '题目详情',
   'menu.questionBank.fast': '快速出题',
   'menu.questionBank.personalQuestion': '我的出题',
   // 审核管理tab
