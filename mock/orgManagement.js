@@ -108,8 +108,8 @@ function getSchoolDetail(req, res, ) {
 }
 
 export default {
-  'GET /api/v1/orgManager/schools': getSchool,
-  'GET /api/v1/orgManager/schools/accounts': getAccounts,
-  'GET /api/v1/orgManager/schools/:id': getSchoolDetail,
-  'POST /api/v1/orgManager/schools': postNewSchool,
+  'GET /v1/orgManager/schools': getSchool,
+  'GET /v1/orgManager/schools/accounts': getAccounts,
+  'GET /v1/orgManager/schools/:id': getSchoolDetail,
+  'POST /v1/orgManager/schools': postNewSchool,
 };

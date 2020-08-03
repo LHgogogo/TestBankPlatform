@@ -47,9 +47,9 @@ const QuestionCell = (props) => {
         某班有36名同学参加数学、物理、化学课外探究小组，每名同学至多参加两个小组．已知参加数学、物理、化学小组的人数分别为26,15,13，同时参加数学和物理小组的有6人，同时参加物理和化学小组的有4人，则同时参加数学和化学小组的有多少人？
       </div>
       <div className={styles.picture}>
-        <img />
-        <img />
-        <img />
+        <img src="https://baidu.com" />
+        <img src="https://baidu.com" />
+        <img src="https://baidu.com" />
       </div>
       <div className={styles.select}>
         <span>A. 1</span>
@@ -72,7 +72,7 @@ const QuestionCell = (props) => {
           <span><BookOutlined />{useNum || 0}</span>
         </div>
         <div>
-          <Link type="link" to="/questionBank/detail/1">详情</Link>
+          <Link type="link" to="/questionBank/manage/detail/1">详情</Link>
           <Divider type="vertical" />
           <a type="link">更多</a>
         </div>

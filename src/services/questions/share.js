@@ -1,13 +1,13 @@
 import request from '@/utils/request';
 
 export async function getQuestionQuerys(params) {
-  return request('/api/question/querys', {
+  return request('/question/querys', {
     method: 'GET',
     data: params,
   });
 }
 export async function getQuestionShareList(params) {
-  return request('/api/question/share', {
+  return request('/question/share', {
     method: 'GET',
     data: params,
   });

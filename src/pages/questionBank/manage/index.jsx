@@ -3,7 +3,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Button, Pagination } from 'antd'
 import QuestionsearchHeader from '../components/QuestionsearchHeader'
 import RadioSearch from '../components/RadioSearch'
-import QuestionCell from '../components/QuestionCell'
+import QuestionList from '../components/QuestionList'
 import styles from './index.less'
 
 
@@ -161,17 +161,7 @@ const Bank = () => {
         {selectedRowKeys.length ? <span>{`已选中${selectedRowKeys.length * 1}项`}</span> : null}
       </span>
     </span>
-    <div className={styles.questionTable}>
-      <div className={styles.list}>
-        <QuestionCell />
-        <QuestionCell />
-        <QuestionCell />
-        <QuestionCell />
-        <QuestionCell />
-        <QuestionCell />
-      </div>
-      <Pagination size="small" total={50} showSizeChanger showQuickJumper className={styles.pagination}/>
-    </div>
+    <QuestionList className={styles.questionTable} />
 
   </PageHeaderWrapper>
 }

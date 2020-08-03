@@ -96,10 +96,10 @@ function getDataAnalysisPersonCount(req, res, ) {
 }
 
 export default {
-  'GET /api/v1/dataAnalysis/operates/count': getDataAnalysisCount,
-  'GET /api/v1/dataAnalysis/userData/count': getDataAnalysisUserCount,
-  'GET /api/v1/dataAnalysis/operates/histogram': getDataAnalysisBar,
-  'GET /api/v1/dataAnalysis/school/count': getDataAnalysisSchoolCount,
-  'GET /api/v1/dataAnalysis/person/count': getDataAnalysisPersonCount,
+  'GET /v1/dataAnalysis/operates/count': getDataAnalysisCount,
+  'GET /v1/dataAnalysis/userData/count': getDataAnalysisUserCount,
+  'GET /v1/dataAnalysis/operates/histogram': getDataAnalysisBar,
+  'GET /v1/dataAnalysis/school/count': getDataAnalysisSchoolCount,
+  'GET /v1/dataAnalysis/person/count': getDataAnalysisPersonCount,
 
 };
