@@ -91,4 +91,5 @@ Login.UserName = LoginItem.UserName;
 Login.Password = LoginItem.Password;
 Login.Mobile = LoginItem.Mobile;
 Login.Captcha = LoginItem.Captcha;
+Login.ImgCaptcha = LoginItem.ImgCaptcha;
 export default Login;

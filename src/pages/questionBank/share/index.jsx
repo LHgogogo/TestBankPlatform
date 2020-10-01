@@ -3,8 +3,8 @@ import { Table, Button, Modal } from 'antd'
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { getQuestionShareList } from '@/services/questions/share'
 import styles from './index.less'
-import QuestionsearchHeader from '../components/QuestionsearchHeader'
-import RadioSearch from '../components/RadioSearch'
+import QuestionsearchHeader from '../../../components/QuestionsearchHeader'
+import RadioSearch from '../../../components/RadioSearch'
 
 
 const columns = [

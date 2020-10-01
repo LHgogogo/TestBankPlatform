@@ -7,8 +7,9 @@ export async function getQuestionQuerys(params) {
   });
 }
 export async function getQuestionShareList(params) {
-  return request('/question/share', {
+  return request('/v1/paper/share/list', {
     method: 'GET',
     data: params,
   });
 }
+

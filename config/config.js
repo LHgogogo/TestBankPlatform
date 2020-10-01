@@ -68,12 +68,6 @@ export default defineConfig({
           authority: ['admin'],
         },],
       },
-      {
-        name: 'list.table-list',
-        icon: 'table',
-        path: '/list',
-        component: './ListTableList',
-      },
       // 数据分析tab
       {
         path: '/dataAnalysis',
@@ -105,7 +99,6 @@ export default defineConfig({
         name: 'questionBank',
         icon: 'bank',
         // component: './Admin',
-        authority: ['admin', 'user'],
         routes: [
           {
             path: '/questionBank/share',
@@ -143,6 +136,16 @@ export default defineConfig({
             path: '/questionBank/personalQuestion/create',
             component: './MyQuestion/Create'
           },
+          {
+            hideInMenu: true,
+            path: '/questionBank/personalQuestion/edit/:id',
+            component: './MyQuestion/Create'
+          },
+          {
+            hideInMenu: true,
+            path: '/questionBank/personalQuestion/detail/:id',
+            component: './questionBank/detail',
+          },
         ],
       },
       // 审核管理tab
@@ -154,14 +157,26 @@ export default defineConfig({
           path: '/auditManage/publishAudit',
           name: 'publishAudit',
           icon: 'file-protect',
-          component: './Welcome'
+          component: './Audit/SubQuestion'
         },
         {
           path: '/auditManage/wrongAudit',
           name: 'wrongAudit',
           icon: 'exception',
-          component: './Welcome'
+          component: './Audit/WrongQuestion'
         },
+        {
+          hideInMenu: true,
+          path: '/auditManage/wrongAudit/detail/:id',
+          component: './questionBank/detail',
+          // component: './Welcome'
+        },
+        {
+          hideInMenu: true,
+          path: '/auditManage/publishAudit/detail/:id',
+          component: './questionBank/detail',
+          // component: './Welcome'
+        }
         ],
       },
       // 组织管理tab

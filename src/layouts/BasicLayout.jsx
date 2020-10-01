@@ -144,6 +144,7 @@ const BasicLayout = props => {
       <Authorized authority={authorized.authority} noMatch={noMatch}>
         {children}
       </Authorized>
+
     </ProLayout>
   );
 };

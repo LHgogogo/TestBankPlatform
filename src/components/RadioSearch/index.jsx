@@ -20,11 +20,11 @@ const RadioSearch = (props) => {
 
       </Radio.Group>
     </span>
-    <Search
+    {/* <Search
       onSearch={(value) => {
         onSearch(currentOption, value)
       }}
-      className={styles.search} />
+      className={styles.search} /> */}
   </div>
 }
 export default RadioSearch

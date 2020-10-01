@@ -5,8 +5,9 @@ import { uploadImg } from '@/services/myQuestion/create'
 import styles from './index.less'
 
 
-const QuestionBraftEditor = (props) => {
+const QuestionBraftEditor = React.memo((props) => {
   const { value, onChange, placeholder } = props
+  console.log('render', value)
   const editorChange = (changes) => {
     if (onChange) onChange(changes)
   }
@@ -36,7 +37,9 @@ const QuestionBraftEditor = (props) => {
       }}
       onChange={editorChange} />
   </div>
-}
+}, (pre, next) => {
+  return pre.value === next.value
+})
 const { createEditorState } = BraftEditor
 export {
   QuestionBraftEditor,

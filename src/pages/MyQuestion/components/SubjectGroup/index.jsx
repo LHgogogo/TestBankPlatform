@@ -46,9 +46,6 @@ const debounce = (fn, wait = 500) => {
 const SubjectGroup = (props) => {
   const { data, value = [[]], onChange } = props
   const changeCascader = (select, index) => {
-    console.log(select)
-    console.log(index)
-
     if (onChange) {
       value[index] = select
       onChange([...value])

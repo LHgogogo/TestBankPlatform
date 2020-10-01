@@ -4,11 +4,13 @@ import { Button } from 'antd'
 import { Link } from 'react-router-dom'
 import QuestionList from '@/components/QuestionList'
 import QuestionsearchHeader from '@/components/QuestionsearchHeader'
-import { getTags } from '@/services/myQuestion/create'
+import { getTags, getMyQuestionList } from '@/services/myQuestion/create'
+import { getWrongQuestionList } from '@/services/audit'
+import RadioSearch from '@/components/RadioSearch'
 import styles from './index.less'
 
 
-const MyQuestion = (props) => {
+const WrongQuestion = (props) => {
   const selectOptions = [
     {
       defaultValue: '0',
@@ -89,7 +91,25 @@ const MyQuestion = (props) => {
       })
     }
   ]
-  const [query, setQuery] = useState({})
+  const searchOptions = [{
+    value: '1',
+    label: '待审核'
+  },
+  {
+    value: '10',
+    label: '不是错题'
+  },
+  {
+    value: '11',
+    label: '是错题'
+  }]
+  const [query, setQuery] = useState({ status: 1 })
+  const onSearch = (status, input) => {
+    setQuery({
+      ...query,
+      status: [status]
+    })
+  }
   return <PageHeaderWrapper>
     <div className={styles.content}>
       <div className={styles.head}>
@@ -98,20 +118,24 @@ const MyQuestion = (props) => {
           onQuery={(querys) => {
             setQuery(querys)
           }} />
-        <Button type='primary' className={styles.btns}>
-          <Link to="/questionBank/personalQuestion/create">新建</Link>
-        </Button>
+        <RadioSearch
+          defaultValue="1"
+          options={searchOptions}
+          onSearch={onSearch} />
       </div>
-        <QuestionList className={styles.questionTable}
-          query={{
-            ...query,
-            queryType: 1
-          }}
-          detailUrl="/questionBank/personalQuestion/detail/"
-        />
+      <QuestionList
+        modifyRequest={getWrongQuestionList}
+        className={styles.questionTable}
+        isAudit
+        isWrong
+        query={{
+          ...query
+        }}
+        detailUrl="/auditManage/wrongAudit/detail/"
+      />
 
     </div>
 
   </PageHeaderWrapper>
 }
-export default MyQuestion
+export default WrongQuestion

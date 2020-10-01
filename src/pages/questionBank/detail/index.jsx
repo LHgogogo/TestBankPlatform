@@ -1,101 +1,352 @@
-import React from 'react'
+/* eslint-disable react/no-danger */
+import React, { useEffect, useState } from 'react'
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Col, Row, Button } from 'antd';
-import { StarOutlined, BookOutlined } from '@ant-design/icons';
+import { StarOutlined, BookOutlined, BugFilled, DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Col, Row, Button, Divider, Dropdown, Menu, Modal, Input } from 'antd'
+import { getQuestionDetail } from '@/services/questions/detail';
+import { changeQuestionStatus } from '@/services/audit';
+import { deleteQuestion } from '@/services/myQuestion/create';
+import { QuestionTypesDetail } from '@/components/Enums';
+import { Link } from 'react-router-dom'
 import styles from './index.less'
 
+const { TextArea } = Input
 const QuestionDeailHeader = (props) => {
-  const { className } = props
+
+  const { className, data = {}, isAudit } = props
+  const {
+    subjectTreeFullNames,
+    type,
+    tags = [],
+    difficultyLevel,
+    status = 0,
+    submitTime,
+    remark,
+    submitUserName,
+    auditTime,
+    auditUserName
+  } = data
+  const starRender = () => {
+    const star = '⭐'
+    const arr = Array(difficultyLevel).fill(star)
+    return arr.join('')
+  }
+  const statusRender = () => {
+    switch (status) {
+      case 0:
+        return '未提交'
+      case 1:
+        return '待审核'
+      case 2:
+        return '发布中'
+      case 3:
+        return '审核拒绝'
+      case 4:
+        return '下架'
+
+      default:
+        return '未知'
+    }
+  }
+  const normalRender = () => {
+    return <Row className={styles.row}>
+      <Col span={12}>
+        <span className={styles.title}>状态：</span>
+        <span>{statusRender()}</span>
+      </Col>
+      <Col span={12}>
+        <span className={styles.title}>发布时间：</span>
+        <span>{submitTime}</span>
+      </Col>
+    </Row>
+  }
+  const auditRender = () => {
+    return <>
+      <Row className={styles.row}>
+        <Col span={12}>
+          <span className={styles.title}>说明/原因：</span>
+          <span>{remark}</span>
+        </Col>
+        <Col span={12}>
+          <span className={styles.title}>状态：</span>
+          <span>{statusRender()}</span>
+        </Col>
+      </Row>
+      <Row className={styles.row}>
+        <Col span={12}>
+          <span className={styles.title}>提交人：</span>
+          <span>{submitUserName}</span>
+        </Col>
+        <Col span={12}>
+          <span className={styles.title}>提交时间：</span>
+          <span>{submitTime}</span>
+        </Col>
+      </Row>
+      <Row className={styles.row}>
+        <Col span={12}>
+          <span className={styles.title}>审核人：</span>
+          <span>{auditUserName || '-'}</span>
+        </Col>
+        <Col span={12}>
+          <span className={styles.title}>提交时间：</span>
+          <span>{auditTime}</span>
+        </Col>
+      </Row>
+    </>
+  }
   return <div className={className}>
     <Row className={styles.row}>
       <Col span={12}>
         <span className={styles.title}>科目课程：</span>
-        <span>数学>人教版>三年级>第一单元：平面图形>认识图形</span>
+        <span>{subjectTreeFullNames}</span>
       </Col>
       <Col span={12}>
         <span className={styles.title}>题型：</span>
-        <span>解答题</span>
+        <span>{QuestionTypesDetail[type]?.title || ''}</span>
       </Col>
     </Row>
     <Row className={styles.row}>
       <Col span={12}>
         <span className={styles.title}>题目标签：</span>
-        <span>标签1、标签2</span>
+        <span>{tags?.map(x => { return x.value })}</span>
       </Col>
       <Col span={12}>
         <span className={styles.title}>难度：</span>
-        <span>⭐⭐⭐⭐⭐</span>
+        <span>{starRender()}</span>
       </Col>
     </Row>
-    <Row className={styles.row}>
-      <Col span={12}>
-        <span className={styles.title}>状态：</span>
-        <span>已发布</span>
-      </Col>
-      <Col span={12}>
-        <span className={styles.title}>发布时间：</span>
-        <span>2020.03.14 12:23:45</span>
-      </Col>
-    </Row>
+
+    {isAudit ? auditRender() : normalRender()}
+
   </div>
 }
 
 const QuestionDeatailContent = (props) => {
-  const { className } = props
+  const { className, data = {} } = props
+  const { question, options = [], answer, analysis } = data
   return <div className={className}>
-    <div className={styles.line}>
+    {/* <div className={styles.line}>
       <div>tags</div>
       <div>
         <span><StarOutlined />{11 || 0}</span>
         <span><BookOutlined />{11 || 0}</span>
       </div>
-    </div>
+    </div> */}
     <div>
       <div className={styles.question}>
-        <div className={styles.desc}>
-          某班有36名同学参加数学、物理、化学课外探究小组，每名同学至多参加两个小组．已知参加数学、物理、化学小组的人数分别为26,15,13，同时参加数学和物理小组的有6人，同时参加物理和化学小组的有4人，则同时参加数学和化学小组的有多少人？
-        </div>
-        <div className={styles.picture}>
-          <img src="https://baidu.com" />
-          <img src="https://baidu.com" />
-          <img src="https://baidu.com" />
-        </div>
+        <div className={styles.desc} dangerouslySetInnerHTML={{ '__html': question || '' }} />
         <div className={styles.select}>
-          <span>A. 1</span>
-          <span>B. 1</span>
-          <span>C. 1</span>
-          <span>D. 1</span>
-          <span>E. 1</span>
+          {options?.map(x => <span key={x} dangerouslySetInnerHTML={{ '__html': x || '' }} />)}
         </div>
       </div>
       <div className={styles.answer}>
         <div className={styles.title}>解答：</div>
-        <div className={styles.desc}>答案在这里</div>
-        <div className={styles.picture}>
-          <img src="https://baidu.com" />
-          <img src="https://baidu.com" />
-          <img src="https://baidu.com" />
-        </div>
+        <div className={styles.desc}>{answer}</div>
+        <div className={styles.desc} dangerouslySetInnerHTML={{ '__html': analysis || '' }} />
       </div>
     </div>
   </div>
 }
-
-const QuestionDetail = () => {
+const RejectModal = (props) => {
+  const { visible, id, onCancel } = props
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const cancel = <Button key="cancel" onClick={onCancel}>取消</Button>
+  const done = <Button key="done" type='primary' loading={loading} onClick={() => {
+    changeQuestionStatus({
+      status: 3,
+      id,
+      remark: input
+    }).then(_ => {
+      setLoading(false)
+      onCancel()
+    })
+  }}>确定</Button>
+  return <Modal
+    title="未通过理由"
+    visible={visible}
+    footer={[cancel, done]}>
+    <TextArea
+      autoSize={{ minRows: 3, maxRows: 5 }}
+      placeholder="请输入未通过理由"
+      value={input}
+      onChange={({ target: { value } }) => {
+        setInput(value)
+      }} />
+  </Modal>
+}
+const useDetail = (params) => {
+  const [detail, setDetail] = useState({})
+  useEffect(() => {
+    getQuestionDetail(params).then(res => {
+      if (res.code < 300) {
+        setDetail(res.data)
+      }
+    })
+  }, [])
+  return detail
+}
+const QuestionDetail = (props) => {
+  const { match = {}, location = {} } = props
+  const { params } = match
+  const { state: { isAudit, isWrong } } = location
+  const detail = useDetail(params)
+  const [showModal, setShowModal] = useState(false)
+  const onBtnClick = (t) => {
+    let title = ''
+    let onOk
+    if (t === 'del') {
+      title = '删除后将不能找回，确认删除？'
+      onOk = () => {
+        return new Promise((resolve) => {
+          deleteQuestion({
+            id: detail.id
+          }).then(resolve)
+        })
+      }
+    }
+    if (t === 'sub') {
+      title = '提交新题审核？'
+      onOk = () => {
+        return new Promise((resolve) => {
+          changeQuestionStatus({
+            status: 1,
+            id: detail.id
+          }).then(resolve)
+        })
+      }
+    }
+    if (t === 'rev') {
+      title = '撤回新题审核？'
+      onOk = () => {
+        return new Promise((resolve) => {
+          changeQuestionStatus({
+            status: 1,
+            id: detail.id
+          }).then(resolve)
+        })
+      }
+    }
+    if (t === 'iserr') {
+      title = '判定是错题，并在题库中下架？'
+      onOk = () => {
+        return new Promise((resolve) => {
+          changeQuestionStatus({
+            status: 10,
+            id: detail.id,
+            remark: '错题'
+          }).then(resolve)
+        })
+      }
+    }
+    if (t === 'noerr') {
+      title = '不是错题？'
+      onOk = () => {
+        return new Promise((resolve) => {
+          changeQuestionStatus({
+            status: 11,
+            id: detail.id
+          }).then(resolve)
+        })
+      }
+    }
+    if (t === 'audit') {
+      title = '审核通过并将此题发布至题库？'
+      onOk = () => {
+        return new Promise((resolve) => {
+          changeQuestionStatus({
+            status: 2,
+            id: detail.id
+          }).then(resolve)
+        })
+      }
+    }
+    if (t === 'reject') {
+      setShowModal(true)
+      return 
+    }
+    Modal.confirm({
+      title: '注意',
+      icon: <ExclamationCircleOutlined />,
+      content: title,
+      okText: '确认',
+      cancelText: '取消',
+      onOk
+    })
+  }
+  const btnsRender = () => {
+    const edit = <Button key="edit" >
+      <Link to={`/questionBank/personalQuestion/edit/${detail.id}`}>编辑</Link>
+    </Button>
+    const sub = <Button key="sub" onClick={() => {
+      onBtnClick('sub')
+    }}>提交审核</Button>
+    const rev = <Button key="rev" onClick={() => {
+      onBtnClick('rev')
+    }}>撤回审核</Button>
+    const del = <Button key="del" style={{ color: 'red' }} onClick={() => {
+      onBtnClick('del')
+    }}>删除</Button>
+    const isErr = <Button
+      key="iserr"
+      type='primary'
+      onClick={() => {
+        onBtnClick('iserr')
+      }}>错题并下架</Button>
+    const noErr = <Button key="noerr" onClick={() => {
+      onBtnClick('noerr')
+    }}>不是错题</Button>
+    const audit = <Button
+      key="audit"
+      type='primary'
+      onClick={() => {
+        onBtnClick('audit')
+      }}>通过并发布</Button>
+    const reject = <Button key="reject" onClick={() => {
+      onBtnClick('reject')
+    }}>未通过</Button>
+    let btnList = []
+    switch (detail.status) {
+      case 0:
+      case 3:
+        if (!isAudit) (btnList = [edit, sub, del])
+        break;
+      case 1:
+        btnList = isAudit ? [isErr, noErr] : [rev]
+        if (!isWrong) btnList = [audit, reject]
+        break;
+      case 2:
+        btnList = [edit, del]
+        break;
+      case 4:
+        btnList = [del]
+        break;
+      case 10:
+      case 11:
+        break
+      default:
+        btnList = [edit, sub, del]
+        break
+    }
+    return btnList.map(btn => {
+      return btn
+    })
+  }
   return <PageHeaderWrapper >
     <div className={styles.detail}>
-      <QuestionDeailHeader className={styles.header} />
-      <QuestionDeatailContent className={styles.content} />
+      <QuestionDeailHeader className={styles.header} data={detail} isAudit={isAudit} />
+      <QuestionDeatailContent className={styles.content} data={detail} />
       <div className={styles.tool}>
         <div>
           <Button>返回列表</Button>
         </div>
 
-        <div>
-          <Button>下架</Button>
+        <div className={styles.btns}>
+          {btnsRender()}
         </div>
       </div>
     </div>
+    <RejectModal visible={showModal} onCancel={() => setShowModal(false)} />
   </PageHeaderWrapper>
 }
 export default QuestionDetail

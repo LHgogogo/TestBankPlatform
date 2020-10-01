@@ -69,4 +69,17 @@ export default {
       },
     ],
   },
+  ImgCaptcha: {
+    props: {
+      size: 'large',
+      prefix: <MailTwoTone className={styles.prefixIcon} />,
+      placeholder: 'captcha',
+    },
+    rules: [
+      {
+        required: true,
+        message: 'Please enter Captcha!',
+      },
+    ],
+  },
 };

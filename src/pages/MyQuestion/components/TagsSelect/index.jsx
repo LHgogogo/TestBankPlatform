@@ -17,9 +17,9 @@ const TagsSelect = (props) => {
   const clickTag = (tag, select) => {
     if (onChange) {
       if (select) {
-        onChange([...value, tag.id])
+        onChange([...value, tag])
       } else {
-        const index = value.indexOf(tag.id)
+        const index = value.findIndex(x => x.id === tag.id)
         value.splice(index, 1)
         onChange([...value])
       }
@@ -30,7 +30,7 @@ const TagsSelect = (props) => {
     {tags.map(tag => {
       let className = styles.unselect
       let select = false
-      if (value && value.indexOf(tag.id) !== -1) {
+      if (value && value.findIndex(x => x.id === tag.id) !== -1) {
         className = styles.select
         select = true
       }

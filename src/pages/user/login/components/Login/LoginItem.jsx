@@ -1,7 +1,7 @@
 import { Button, Col, Input, Row, Form, message } from 'antd';
 import React, { useState, useCallback, useEffect } from 'react';
 import omit from 'omit.js';
-import { getFakeCaptcha } from '@/services/login';
+import { getMobileCaptcha, getCaptcha } from '@/services/login';
 import ItemMap from './map';
 import LoginContext from './LoginContext';
 import styles from './index.less';
@@ -27,7 +27,7 @@ const getFormItemOptions = ({ onChange, defaultValue, customProps = {}, rules })
 const LoginItem = props => {
   const [count, setCount] = useState(props.countDown || 0);
   const [timing, setTiming] = useState(false); // 这么写是为了防止restProps中 带入 onChange, defaultValue, rules props tabUtil
-
+  const [img, setImg] = useState('');
   const {
     onChange,
     customProps,
@@ -41,20 +41,34 @@ const LoginItem = props => {
     tabUtil,
     ...restProps
   } = props;
-  const onGetCaptcha = useCallback(async mobile => {
-    const result = await getFakeCaptcha(mobile);
-
-    if (result === false) {
-      return;
+  const onGetCaptcha = useCallback(async (phone, captcha, token) => {
+    const result = await getMobileCaptcha({
+      phone,
+      captcha,
+      bizType: 'login',
+      captchaToken: token
+    });
+    if (result.code < 300) {
+      setTiming(true);
+    } else {
+      message.error(result.messageƒ)
     }
 
-    message.success('获取验证码成功！验证码为：1234');
-    setTiming(true);
+
   }, []);
+  const getImgCaptcha = useCallback(async () => {
+    const result = await getCaptcha()
+
+    if (result && result.code < 300) {
+      const token = result.data.captchaToken
+      setImg(result.data.image)
+      localStorage.setItem('captchaToken',token)
+    }
+  })
   useEffect(() => {
     let interval = 0;
     const { countDown } = props;
-
+    if (type === 'ImgCaptcha') getImgCaptcha()
     if (timing) {
       interval = window.setInterval(() => {
         setCount(preSecond => {
@@ -94,15 +108,45 @@ const LoginItem = props => {
             <Col span={8}>
               <Button
                 disabled={timing}
-                className={styles.getCaptcha}
+                // className={styles.getCaptcha}
                 size="large"
                 onClick={() => {
                   const value = getFieldValue('mobile');
-                  onGetCaptcha(value);
+                  const captcha = getFieldValue('captcha');
+                  const token = localStorage.getItem('captchaToken')
+                  onGetCaptcha(value, captcha, token);
                 }}
               >
                 {timing ? `${count} 秒` : '获取验证码'}
               </Button>
+            </Col>
+          </Row>
+        )}
+      </FormItem>
+    );
+  }
+  if (type === 'ImgCaptcha') {
+    const inputProps = omit(otherProps, ['onGetCaptcha', 'countDown']);
+    return (
+      <FormItem shouldUpdate noStyle>
+        {({ setFieldsValue }) => (
+          <Row gutter={8}>
+            <Col span={16}>
+              <FormItem name={name} {...options}>
+                <Input {...customProps} {...inputProps} />
+              </FormItem>
+            </Col>
+            <Col span={8}>
+              {img ? (
+                // eslint-disable-next-line jsx-a11y/alt-text
+                <img
+                  src={`${img}`}
+                  style={{ width: '100%' }}
+                  onClick={() => {
+                    getImgCaptcha(setFieldsValue)
+                  }}
+                />
+              ) : null}
             </Col>
           </Row>
         )}
@@ -120,7 +164,7 @@ const LoginItem = props => {
 const LoginItems = {};
 Object.keys(ItemMap).forEach(key => {
   const item = ItemMap[key];
-
+  
   LoginItems[key] = props => (
     <LoginContext.Consumer>
       {context => (

@@ -1,114 +1,107 @@
 import React, { useState } from 'react'
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Button, Pagination } from 'antd'
-import QuestionsearchHeader from '../components/QuestionsearchHeader'
-import RadioSearch from '../components/RadioSearch'
-import QuestionList from '../components/QuestionList'
+import QuestionList from '@/components/QuestionList'
+import { getTags } from '@/services/myQuestion/create';
+import QuestionsearchHeader from '../../../components/QuestionsearchHeader'
+import RadioSearch from '../../../components/RadioSearch'
 import styles from './index.less'
 
 
-const selectOptions = [{
-  defaultValue: '0',
-  placeHolder: '请选择',
-  queryKey: 'types',
-  options: [
-    {
-      value: '0',
-      label: '全部类型'
-    },
-    {
-      value: '1',
-      label: '试卷'
-    },
-    {
-      value: '2',
-      label: '练习'
-    }
-  ]
-},
-{
-  defaultValue: '0',
-  placeHolder: '请选择',
-  queryKey: 'degreeOfDifficulty',
-  options: [
-    {
-      value: '0',
-      label: '全部难度'
-    },
-    {
-      value: '1',
-      label: '1'
-    },
-    {
-      value: '2',
-      label: '2'
-    },
-    {
-      value: '3',
-      label: '3'
-    },
-    {
-      value: '4',
-      label: '4'
-    },
-    {
-      value: '5',
-      label: '5'
-    }
-  ]
-},
-{
-  defaultValue: '0',
-  placeHolder: '请选择',
-  queryKey: 'tag',
-  options: [
-    {
-      value: '0',
-      label: '全部标签'
-    },
-    {
-      value: '1',
-      label: '1'
-    },
-    {
-      value: '2',
-      label: '2'
-    },
-    {
-      value: '3',
-      label: '3'
-    },
-    {
-      value: '4',
-      label: '4'
-    },
-    {
-      value: '5',
-      label: '5'
-    }
-  ]
-}]
+const selectOptions = [
+  {
+    defaultValue: '0',
+    placeHolder: '请选择题型',
+    queryKey: 'type',
+    options: [
+      {
+        label: '全部题型',
+        value: '0'
+      },
+      {
+        label: '选择题',
+        value: '1'
+      },
+      {
+        label: '多选题',
+        value: '2'
+      },
+      {
+        label: '填空题',
+        value: '3'
+      },
+      {
+        label: '判断题',
+        value: '4'
+      },
+      {
+        label: '解答题',
+        value: '5'
+      }
+    ]
+  },
+  {
+    defaultValue: '0',
+    placeHolder: '请选择难度',
+    queryKey: 'difficultLevels',
+    options: [
+      {
+        label: '全部难度',
+        value: '0'
+      },
+      {
+        label: '一星',
+        value: '1'
+      },
+      {
+        label: '二星',
+        value: '2'
+      },
+      {
+        label: '三星',
+        value: '3'
+      },
+      {
+        label: '四星',
+        value: '4'
+      },
+      {
+        label: '五星',
+        value: '5'
+      }
+    ]
+  },
+  {
+    defaultValue: '0',
+    placeHolder: '请选择难度',
+    queryKey: 'tagIds',
+    options: new Promise((resolve) => {
+      getTags().then(res => resolve([
+        {
+          label: '全部标签',
+          value: '0'
+        },
+        ...res.data.map(x => {
+          return { label: x.value, value: `${x.id}` }
+        })
+      ]))
+    })
+  }]
 const searchOptions = [{
-  value: '0',
-  label: '发布'
+  value: '2',
+  label: '已发布'
 },
 {
-  value: '1',
+  value: '4',
   label: '下架'
 },
 {
-  value: '2',
+  value: '1',
   label: '发布审核中'
 }]
 const Bank = () => {
   const [query, setQuery] = useState({ status: '0' })
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  const [page, setPage] = useState({
-    pageNum: 1,
-    pageSize: 10,
-  })
-  const total = 0
-  // const [list, total] = useList(query, page)
   const onQuery = (current) => {
     setQuery(current)
   }
@@ -131,20 +124,6 @@ const Bank = () => {
     //   }
     // })
   }
-  const pageChange = (pageNum, pageSize) => {
-    setPage({
-      ...page,
-      pageNum,
-      pageSize
-    })
-  }
-  const pagination = {
-    current: page.pageNum,
-    pageSize: page.pageSize,
-    total,
-    showTotal: num => `共 ${num} 条数据`,
-    onChange: pageChange
-  }
   return <PageHeaderWrapper className={styles.page}>
     <QuestionsearchHeader
       selectOptions={selectOptions}
@@ -157,12 +136,14 @@ const Bank = () => {
       <span>
         <Button
           disabled={!selectedRowKeys.length}
-          onClick={onBtnClick}>{query.status === '0' ? '取消共享' : '删除'}</Button>
+          onClick={onBtnClick}>下架</Button>
         {selectedRowKeys.length ? <span>{`已选中${selectedRowKeys.length * 1}项`}</span> : null}
       </span>
     </span>
-    <QuestionList className={styles.questionTable} />
-
+    <QuestionList className={styles.questionTable} query={{
+      ...query,
+      queryType: 2
+    }} />
   </PageHeaderWrapper>
 }
 export default Bank

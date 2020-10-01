@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { PageHeaderWrapper } from '@ant-design/pro-layout'
-import { Steps, Button, Form, Col, Select } from 'antd'
-import { getQuestionSubject } from '@/services/myQuestion/create'
+import { Steps, Button, Form, Col, Select, message } from 'antd'
+import { getQuestionSubject, createQuestion } from '@/services/myQuestion/create'
 import SubjectGroup from '../components/SubjectGroup'
 import DiffStar from '../components/DiffStar'
 import TagsSelect from '../components/TagsSelect'
-import { RichQuestion, questionType } from '../components/RichQuestion'
+import { RichQuestion, questionType, alphabet } from '../components/RichQuestion'
 import styles from './index.less'
 
 const { Step } = Steps
@@ -23,21 +23,51 @@ const useSubjectTreeData = (setLoading) => {
   return treeData
 }
 const steps = [{ title: '填写题目信息' }, { title: '填写题目内容' }]
-
+const formatRichQuestion = (rich) => {
+  const { answer, question, options } = rich
+  return {
+    answer: answer && answer.toHTML(),
+    question: question.toHTML(),
+    options: options && options.map((x, index) => {
+      return `${[alphabet[index]]}. ${x.value.toHTML()}`
+    })
+  }
+}
 const MyQuestionCreate = (props) => {
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [richQuestion, setRichQuestion] = useState({})
+
   const treeData = useSubjectTreeData(setLoading)
+  const [formValues, setFormValues] = useState({})
   const submitToNext = () => {
-    setCurrentStep(Math.max(currentStep + 1, 0))
-    form.validateFields().then((values, err) => {
-      if (err) {
-        return
-      }
-      console.log(values);
+    if (currentStep) {
+      // save
+      // format rich question
+      const richValues = formatRichQuestion(richQuestion)
+      formValues.subjectTreeNodeIds = formValues.subjectTreeNodeIds.map(x => x.lastItem)
+      createQuestion({
+        ...formValues,
+        ...richValues
+      }).then(res => {
+        if (res.code < 300) {
+          message.success('创建成功！')
+        }
+      })
+    } else {
       setCurrentStep(Math.max(currentStep + 1, 0))
-    })
+      form.validateFields().then((values, err) => {
+        if (err) {
+          return
+        }
+        setFormValues({ ...values })
+        setCurrentStep(Math.max(currentStep + 1, 0))
+      })
+    }
+  }
+  const onRichQuestionChange = (input) => {
+    setRichQuestion(input)
   }
   const formRender = () => {
     return <Col offset={8} span={8}><Form form={form} >
@@ -72,7 +102,12 @@ const MyQuestionCreate = (props) => {
   }
   const stepContentRender = () => {
     if (currentStep) {
-      return <Col span={16} offset={4}><RichQuestion type={form.getFieldValue('type')} /></Col>
+      return <Col span={16} offset={4}>
+        <RichQuestion
+          type={form.getFieldValue('type')}
+          onChange={onRichQuestionChange}
+          value={richQuestion} />
+      </Col>
     }
     return formRender()
 
@@ -100,9 +135,7 @@ const MyQuestionCreate = (props) => {
         }}>上一步</Button> : null}
         {currentStep ? <Button
           type="primary"
-          onClick={() => {
-            // save
-          }}>下一步</Button> : <Button
+          onClick={submitToNext}>保存</Button> : <Button
             type="primary"
             onClick={submitToNext}>下一步</Button>}
       </div>
