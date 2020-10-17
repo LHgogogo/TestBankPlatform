@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PageHeaderWrapper } from '@ant-design/pro-layout'
+import { history } from 'umi'
 import { Steps, Button, Form, Col, Select, message } from 'antd'
 import { getQuestionSubject, createQuestion } from '@/services/myQuestion/create'
 import SubjectGroup from '../components/SubjectGroup'
@@ -24,9 +25,10 @@ const useSubjectTreeData = (setLoading) => {
 }
 const steps = [{ title: '填写题目信息' }, { title: '填写题目内容' }]
 const formatRichQuestion = (rich) => {
-  const { answer, question, options } = rich
+  const { answer, question, options, analysis } = rich
   return {
-    answer: answer && answer.toHTML(),
+    analysis: analysis && analysis.toHTML(),
+    answer,
     question: question.toHTML(),
     options: options && options.map((x, index) => {
       return `${[alphabet[index]]}. ${x.value.toHTML()}`
@@ -53,6 +55,7 @@ const MyQuestionCreate = (props) => {
       }).then(res => {
         if (res.code < 300) {
           message.success('创建成功！')
+          history.goBack()
         }
       })
     } else {

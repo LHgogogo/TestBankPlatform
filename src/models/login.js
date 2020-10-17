@@ -23,12 +23,19 @@ const Model = {
     // },
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      }); // Login successfully
-
+      // response = {
+      //   code: 200,
+      //   data: {
+      //     token: '123'
+      //   }
+      // }
       if (response.code < 300) {
+        localStorage.setItem('token', response.data.token)
+        yield put({
+          type: 'changeLoginStatus',
+          payload: response.data,
+        }); // Login successfully
+
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
@@ -54,7 +61,7 @@ const Model = {
 
     logout() {
       const { redirect } = getPageQuery(); // Note: There may be security issues, please note
-
+      localStorage.setItem('token', null)
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
           pathname: '/user/login',
@@ -68,7 +75,10 @@ const Model = {
   reducers: {
     changeLoginStatus(state, { payload }) {
       setAuthority('admin');
-      return { ...state, status: payload.status, type: payload.type };
+      return {
+        ...state,
+        token: payload.token
+      };
     },
   },
 };

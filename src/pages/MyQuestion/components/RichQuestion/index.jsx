@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Divider, Checkbox } from 'antd'
+import { Button, Divider, Checkbox, Radio } from 'antd'
 import { QuestionBraftEditor, createEditorState } from '../QuestionBraftEditor'
 import styles from './index.less'
 
@@ -77,6 +77,12 @@ const findQuestionType = (type) => {
   }
   return {}
 }
+const showChoose = (type) => {
+  if (type === '2' || type === '1' || type === '4') {
+    return true
+  }
+  return false
+}
 const RichQuestion = React.memo((props) => {
   const { type,
     value = {},
@@ -111,6 +117,55 @@ const RichQuestion = React.memo((props) => {
     temp.value = update
     onChangeValue([...options], 'options')
   }
+  const onAnswerSelect = (e) => {
+    if (type === '2') {
+      onChangeValue(e.join(','), 'answer')
+    } else {
+      const { target: { value } } = e
+      onChangeValue(value, 'answer')
+    }
+
+
+  }
+  const optionsRender = () => {
+    return <>
+      <div >
+        {options.map((choose, index) => {
+          return <>
+            <OneOption
+              title={`选项${alphabet[index]}：`}
+              value={choose.value}
+              key={choose.key}
+              onDelete={() => {
+                onDeleteChoose(index)
+              }}
+              onChange={(update) => {
+                onOptionChange(update, index)
+              }} />
+            <Divider dashed />
+          </>
+        })}
+        <Button onClick={onAddChoose} className={styles.bottomBtn}>添加选项</Button>
+      </div>
+      <Divider />
+    </>
+  }
+  const answerOptionsRender = () => {
+    return <div className={styles.option}>
+      <div className={styles.title}>正确选项：</div>
+      {type === '2' || type === '4' ? <Checkbox.Group
+        onChange={onAnswerSelect}
+        options={options.map((x, index) => {
+          return { label: `选项${alphabet[index]}`, value: alphabet[index] }
+        })} /> : <Radio.Group
+          onChange={onAnswerSelect}
+          options={options.map((x, index) => {
+            return { label: `选项${alphabet[index]}`, value: alphabet[index] }
+          })} />}
+
+
+    </div>
+  }
   return <div className={styles.content}>
     <div className={styles.title}>题型：{currentType.title}</div>
     <div className={styles.option}>
@@ -123,32 +178,11 @@ const RichQuestion = React.memo((props) => {
       </div>
     </div>
     <Divider />
-    <div >
-      {options.map((choose, index) => {
-        return <>
-          <OneOption
-            title={`选项${alphabet[index]}：`}
-            value={choose.value}
-            key={choose.key}
-            onDelete={() => {
-              onDeleteChoose(index)
-            }}
-            onChange={(update) => {
-              onOptionChange(update, index)
-            }} />
-          <Divider dashed />
-        </>
-      })}
-      <Button onClick={onAddChoose} className={styles.bottomBtn}>添加选项</Button>
-    </div>
-    <Divider />
+    {showChoose(type) ? optionsRender() : null}
+
     <div>
-      <div className={styles.option}>
-        <div className={styles.title}>正确选项：</div>
-        <Checkbox.Group options={options.map((x, index) => {
-          return { label: `选项${alphabet[index]}`, value: alphabet[index] }
-        })} />
-      </div>
+      {showChoose(type) ? answerOptionsRender() : null}
+
 
       <div className={styles.option}>
         <div className={styles.title}>答案文本：</div>

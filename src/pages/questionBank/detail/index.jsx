@@ -1,5 +1,6 @@
 /* eslint-disable react/no-danger */
 import React, { useEffect, useState } from 'react'
+import { history } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { StarOutlined, BookOutlined, BugFilled, DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Button, Divider, Dropdown, Menu, Modal, Input } from 'antd'
@@ -189,9 +190,14 @@ const useDetail = (params) => {
 const QuestionDetail = (props) => {
   const { match = {}, location = {} } = props
   const { params } = match
-  const { state: { isAudit, isWrong } } = location
+  const {state = {}} = location
+  const { isAudit, isWrong } = state
   const detail = useDetail(params)
   const [showModal, setShowModal] = useState(false)
+  const backList = () => {
+    history.goBack()
+
+  }
   const onBtnClick = (t) => {
     let title = ''
     let onOk
@@ -338,7 +344,7 @@ const QuestionDetail = (props) => {
       <QuestionDeatailContent className={styles.content} data={detail} />
       <div className={styles.tool}>
         <div>
-          <Button>返回列表</Button>
+          <Button onClick={backList}>返回列表</Button>
         </div>
 
         <div className={styles.btns}>

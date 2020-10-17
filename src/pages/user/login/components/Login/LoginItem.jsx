@@ -111,7 +111,7 @@ const LoginItem = props => {
                 // className={styles.getCaptcha}
                 size="large"
                 onClick={() => {
-                  const value = getFieldValue('mobile');
+                  const value = getFieldValue('userName');
                   const captcha = getFieldValue('captcha');
                   const token = localStorage.getItem('captchaToken')
                   onGetCaptcha(value, captcha, token);

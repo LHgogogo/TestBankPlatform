@@ -3,7 +3,10 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
+import { stringify } from 'querystring';
 import { notification } from 'antd';
+import { history } from 'umi';
+import { getPageQuery } from '@/utils/utils';
 
 const globalData = {
   // url: 'http://114.55.94.182/api'
@@ -56,7 +59,46 @@ const errorHandler = error => {
 const request = extend({
   errorHandler,
   // 默认错误处理
+  headers: {
+    token: localStorage.getItem('token') || ''
+  },
   // credentials: 'include', // 默认请求是否带上cookie
   prefix: globalData.url
+});
+request.interceptors.response.use(async (response) => {
+  const data = await response.clone().json();
+  if (data.code === 403) {
+    const { redirect } = getPageQuery(); // Note: There may be security issues, please note
+
+    if (window.location.pathname !== '/user/login' && !redirect) {
+      history.replace({
+        pathname: '/user/login',
+        search: stringify({
+          redirect: window.location.href,
+        }),
+      });
+    }
+    return {}
+  }
+  return response
+
+});
+request.interceptors.request.use((url, a) => {
+  const options = {
+    ...a
+  }
+  options.headers = {
+    ...options.headers,
+    token: localStorage.getItem('token') || ''
+  }
+  return (
+    {
+      url, // &interceptors=yes
+      options: {
+        ...options,
+        interceptors: true,
+      },
+    }
+  );
 });
 export default request;

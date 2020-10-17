@@ -81,7 +81,7 @@ const selectOptions = [
           label: '全部标签',
           value: '0'
         },
-        ...res.data.map(x => {
+        ...res.data?.map(x => {
           return { label: x.value, value: `${x.id}` }
         })
       ]))
