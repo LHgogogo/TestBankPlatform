@@ -85,8 +85,9 @@ const useList = (query, page) => {
     }
     getQuestionShareList(params).then(response => {
       if (response.code < 300) {
-        setList(response.data)
-        setTotal(response.total)
+        const { data = {} } = response
+        setList(data.records)
+        setTotal(data.total)
       }
     })
   }, [query, page])
