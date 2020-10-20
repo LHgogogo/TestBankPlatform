@@ -78,7 +78,6 @@ request.interceptors.response.use(async (response) => {
         }),
       });
     }
-    return {}
   }
   return response
 

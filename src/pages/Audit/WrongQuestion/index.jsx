@@ -79,15 +79,19 @@ const WrongQuestion = (props) => {
       placeHolder: '请选择难度',
       queryKey: 'tagIds',
       options: new Promise((resolve) => {
-        getTags().then(res => resolve([
-          {
-            label: '全部标签',
-            value: '0'
-          },
-          ...res.data.map(x => {
-            return { label: x.value, value: `${x.id}` }
-          })
-        ]))
+        getTags().then(res => {
+          if (res.code < 300) {
+            resolve([
+              {
+                label: '全部标签',
+                value: '0'
+              },
+              ...res.data.map(x => {
+                return { label: x.value, value: `${x.id}` }
+              })
+            ])
+          }
+        })
       })
     }
   ]
