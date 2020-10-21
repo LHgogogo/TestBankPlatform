@@ -88,8 +88,9 @@ const RichQuestion = React.memo((props) => {
     value = {},
     value: {
       question = createEditorState(''),
-      answer = createEditorState(''),
-      options = []
+      options = [],
+      answer = undefined,
+      analysis = createEditorState('')
     },
     onChange } = props
   const currentType = findQuestionType(type)
@@ -154,11 +155,13 @@ const RichQuestion = React.memo((props) => {
     return <div className={styles.option}>
       <div className={styles.title}>正确选项：</div>
       {type === '2' || type === '4' ? <Checkbox.Group
+        value={answer}
         onChange={onAnswerSelect}
         options={options.map((x, index) => {
           return { label: `选项${alphabet[index]}`, value: alphabet[index] }
         })} /> : <Radio.Group
           onChange={onAnswerSelect}
+          value={answer || []}
           options={options.map((x, index) => {
             return { label: `选项${alphabet[index]}`, value: alphabet[index] }
           })} />}
@@ -187,11 +190,11 @@ const RichQuestion = React.memo((props) => {
       <div className={styles.option}>
         <div className={styles.title}>答案文本：</div>
         <div className={styles.richBlock}>
-          {/* <QuestionBraftEditor
+          <QuestionBraftEditor
             className={styles.input}
-            value={answer}
-            onChange={(input) => onChangeValue(input, 'answer')}
-          /> */}
+            value={analysis}
+            onChange={(input) => onChangeValue(input, 'analysis')}
+          />
         </div>
       </div>
     </div>
@@ -199,5 +202,5 @@ const RichQuestion = React.memo((props) => {
 })
 
 export {
-  RichQuestion, questionType, alphabet
+  RichQuestion, questionType, alphabet, createEditorState
 }

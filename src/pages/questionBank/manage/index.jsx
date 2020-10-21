@@ -94,13 +94,14 @@ const searchOptions = [{
 {
   value: '4',
   label: '下架'
-},
-{
-  value: '1',
-  label: '发布审核中'
-}]
+}
+  // {
+  //   value: '1',
+  //   label: '发布审核中'
+  // }
+]
 const Bank = () => {
-  const [query, setQuery] = useState({ status: '0' })
+  const [query, setQuery] = useState({ status: '2' })
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const onQuery = (current) => {
     setQuery(current)
@@ -130,20 +131,22 @@ const Bank = () => {
       onQuery={onQuery} />
     <span>
       <RadioSearch
-        defaultValue="0"
+        defaultValue="2"
         options={searchOptions}
         onSearch={onSearch} />
-      <span>
+      {/* <span>
         <Button
           disabled={!selectedRowKeys.length}
           onClick={onBtnClick}>下架</Button>
         {selectedRowKeys.length ? <span>{`已选中${selectedRowKeys.length * 1}项`}</span> : null}
-      </span>
+      </span> */}
     </span>
-    <QuestionList className={styles.questionTable} query={{
-      ...query,
-      queryType: 2
-    }} />
+    <QuestionList className={styles.questionTable}
+      query={{
+        ...query,
+        queryType: 2
+      }}
+      detailUrl="/questionBank/manage/detail/" />
   </PageHeaderWrapper>
 }
 export default Bank

@@ -158,9 +158,12 @@ const RejectModal = (props) => {
       status: 3,
       id,
       remark: input
-    }).then(_ => {
+    }).then(res => {
       setLoading(false)
       onCancel()
+      if(res.code < 300) {
+        history.goBack()
+      }
     })
   }}>确定</Button>
   return <Modal
@@ -207,6 +210,11 @@ const QuestionDetail = (props) => {
         return new Promise((resolve) => {
           deleteQuestion({
             id: detail.id
+          }).then(res => {
+            if(res.code < 300) {
+              history.goBack()
+            }
+            return Promise.resolve()
           }).then(resolve)
         })
       }
@@ -218,6 +226,11 @@ const QuestionDetail = (props) => {
           changeQuestionStatus({
             status: 1,
             id: detail.id
+          }).then(res => {
+            if(res.code < 300) {
+              history.goBack()
+            }
+            return Promise.resolve()
           }).then(resolve)
         })
       }
@@ -229,6 +242,11 @@ const QuestionDetail = (props) => {
           changeQuestionStatus({
             status: 1,
             id: detail.id
+          }).then(res => {
+            if(res.code < 300) {
+              history.goBack()
+            }
+            return Promise.resolve()
           }).then(resolve)
         })
       }
@@ -241,6 +259,11 @@ const QuestionDetail = (props) => {
             status: 10,
             id: detail.id,
             remark: '错题'
+          }).then(res => {
+            if(res.code < 300) {
+              history.goBack()
+            }
+            return Promise.resolve()
           }).then(resolve)
         })
       }
@@ -252,6 +275,11 @@ const QuestionDetail = (props) => {
           changeQuestionStatus({
             status: 11,
             id: detail.id
+          }).then(res => {
+            if(res.code < 300) {
+              history.goBack()
+            }
+            return Promise.resolve()
           }).then(resolve)
         })
       }
@@ -263,6 +291,11 @@ const QuestionDetail = (props) => {
           changeQuestionStatus({
             status: 2,
             id: detail.id
+          }).then(res => {
+            if(res.code < 300) {
+              history.goBack()
+            }
+            return Promise.resolve()
           }).then(resolve)
         })
       }

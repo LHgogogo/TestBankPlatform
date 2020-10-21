@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Modal } from 'antd'
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { getQuestionShareList } from '@/services/questions/share'
+import { getQuestionShareList, cancelShare, deleteSharePaper } from '@/services/questions/share'
 import styles from './index.less'
 import QuestionsearchHeader from '../../../components/QuestionsearchHeader'
 import RadioSearch from '../../../components/RadioSearch'
@@ -111,25 +111,53 @@ const QuestionShare = () => {
       keyword: input
     })
   }
-  const onBtnClick = () => {
-    Modal.confirm({
-      centered: true,
-      okText: '确定',
-      cancelText: '取消',
-      title: '系统提示',
-      content: '确定取消分享？',
-      onOk() {
 
-      }
-    })
-
-  }
   const pageChange = (pageNum, pageSize) => {
     setPage({
       ...page,
       pageNum,
       pageSize
     })
+  }
+  const onBtnClick = () => {
+    if (query.status === '0') {
+      Modal.confirm({
+        centered: true,
+        okText: '确定',
+        cancelText: '取消',
+        title: '系统提示',
+        content: '确定取消分享？',
+        onOk() {
+          Promise.all(selectedRowKeys.map(id => {
+            return cancelShare({
+              id,
+              status: 6
+            })
+          })).then(() => {
+            pageChange(1, 10)
+          })
+        }
+      })
+    } else {
+      Modal.confirm({
+        centered: true,
+        okText: '确定',
+        cancelText: '取消',
+        title: '系统提示',
+        content: '确定删除作业卷？',
+        onOk() {
+          Promise.all(selectedRowKeys.map(id => {
+            return deleteSharePaper({
+              id
+            })
+          })).then(() => {
+            pageChange(1, 10)
+          })
+        }
+      })
+    }
+
+
   }
   const pagination = {
     current: page.pageNum,

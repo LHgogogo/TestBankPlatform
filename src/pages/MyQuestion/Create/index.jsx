@@ -3,15 +3,27 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout'
 import { history } from 'umi'
 import { Steps, Button, Form, Col, Select, message } from 'antd'
 import { getQuestionSubject, createQuestion } from '@/services/myQuestion/create'
+import { getQuestionDetail } from '@/services/questions/detail';
 import SubjectGroup from '../components/SubjectGroup'
 import DiffStar from '../components/DiffStar'
 import TagsSelect from '../components/TagsSelect'
-import { RichQuestion, questionType, alphabet } from '../components/RichQuestion'
+import { RichQuestion, questionType, alphabet, createEditorState } from '../components/RichQuestion'
 import styles from './index.less'
 
 const { Step } = Steps
 const { Option } = Select
-
+const useQuestionDetail = (params, form) => {
+  const [detail, setDetail] = useState({})
+  useEffect(() => {
+    getQuestionDetail(params).then(res => {
+      if (res.code < 300) {
+        setDetail(res.data)
+        form.resetFields()
+      }
+    })
+  }, [params])
+  return detail
+}
 const useSubjectTreeData = (setLoading) => {
   const [treeData, setTreeData] = useState([])
   useEffect(() => {
@@ -22,6 +34,25 @@ const useSubjectTreeData = (setLoading) => {
     })
   }, [])
   return treeData
+}
+const useRichQuestion = (detail) => {
+  const [richQuestion, setRichQuestion] = useState({})
+  useEffect(() => {
+    const { analysis = '', answer = '', options = [], question = '', type } = detail
+    const htmls = options.map(x => {
+      return {
+        value: createEditorState(x.split(' ')[1]),
+        key: x.split(' ')[0]
+      }
+    })
+    setRichQuestion({
+      analysis: analysis && createEditorState(analysis),
+      answer: (type === '2' || type === '4') ? answer.split(',') : answer,
+      options: htmls,
+      question: question && createEditorState(question)
+    })
+  }, [detail])
+  return [richQuestion, setRichQuestion]
 }
 const steps = [{ title: '填写题目信息' }, { title: '填写题目内容' }]
 const formatRichQuestion = (rich) => {
@@ -37,9 +68,12 @@ const formatRichQuestion = (rich) => {
 }
 const MyQuestionCreate = (props) => {
   const [form] = Form.useForm();
+  const { match = {} } = props
+  const { params } = match
+  const detail = useQuestionDetail(params, form)
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [richQuestion, setRichQuestion] = useState({})
+  const [richQuestion, setRichQuestion] = useRichQuestion(detail)
 
   const treeData = useSubjectTreeData(setLoading)
   const [formValues, setFormValues] = useState({})
@@ -73,34 +107,46 @@ const MyQuestionCreate = (props) => {
     setRichQuestion(input)
   }
   const formRender = () => {
-    return <Col offset={8} span={8}><Form form={form} >
-      <Form.Item name="subjectTreeNodeIds" rules={[{
-        required: true,
-        message: '选择科目课程'
-      }]}>
-        <SubjectGroup data={treeData} loading={loading} />
-      </Form.Item>
-      <Form.Item name="type" label="题目类型" rules={[{
-        required: true,
-        message: '选择题目类型'
-      }]}>
-        <Select>
-          {questionType.map(x => <Option value={x.value} key={x.value}>{x.title}</Option>)}
-        </Select>
-      </Form.Item>
-      <Form.Item name="difficultyLevel" label="难度" rules={[{
-        required: true,
-        message: '选择题目难度'
-      }]}>
-        <DiffStar />
-      </Form.Item>
-      <Form.Item name="tags" label="标签" rules={[{
-        required: true,
-        message: '选择题目标签'
-      }]}>
-        <TagsSelect />
-      </Form.Item>
-    </Form>
+    return <Col offset={8} span={8}>
+      <Form form={form}
+        initialValues={{
+          subjectTreeNodeIds: detail.nodeIds,
+          type: `${detail.type}`,
+          difficultyLevel: detail.difficultyLevel,
+          tags: detail.tags,
+        }} >
+        <Form.Item name="subjectTreeNodeIds"
+          rules={[{
+            required: true,
+            message: '选择科目课程'
+          }]}
+        >
+          <SubjectGroup data={treeData} loading={loading} />
+        </Form.Item>
+        <Form.Item name="type" label="题目类型"
+          rules={[{
+            required: true,
+            message: '选择题目类型'
+          }]}>
+          <Select>
+            {questionType.map(x => <Option value={x.value} key={x.value}>{x.title}</Option>)}
+          </Select>
+        </Form.Item>
+        <Form.Item name="difficultyLevel" label="难度"
+          rules={[{
+            required: true,
+            message: '选择题目难度'
+          }]}>
+          <DiffStar />
+        </Form.Item>
+        <Form.Item name="tags" label="标签"
+          rules={[{
+            required: true,
+            message: '选择题目标签'
+          }]}>
+          <TagsSelect />
+        </Form.Item>
+      </Form>
     </Col>
   }
   const stepContentRender = () => {

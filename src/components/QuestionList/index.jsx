@@ -39,11 +39,11 @@ const QuestionList = (props) => {
 
   const [list, total] = useList(query, pageNum, pageSize, modifyRequest)
   return <div className={styles.questionTable}>
-    <QuestionCellContext.Provider value={detailUrl}>
+    <QuestionCellContext.Provider >
       <div className={styles.list}>
         {
           list.map(record => {
-            return <QuestionCell key={record.id} data={record} isAudit={isAudit} isWrong={isWrong} />
+            return <QuestionCell url={detailUrl} key={record.id} data={record} isAudit={isAudit} isWrong={isWrong} />
           })
         }
       </div>

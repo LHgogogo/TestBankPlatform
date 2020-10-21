@@ -67,7 +67,7 @@ const statusRender = (status, reason) => {
   return <span style={style}>{statuData.title}</span>
 }
 const QuestionCell = (props) => {
-  const { data = {}, isAudit, isWrong } = props
+  const { data = {}, isAudit, isWrong, url } = props
   const { question,
     difficultyLevel = 0,
     type,
@@ -111,6 +111,17 @@ const QuestionCell = (props) => {
         })
       }
     }
+    if (t === 'verb') {
+      title = '确定下架当前题目？'
+      onOk = () => {
+        return new Promise((resolve) => {
+          changeQuestionStatus({
+            status: 4,
+            id: data.id
+          }).then(resolve)
+        })
+      }
+    }
     Modal.confirm({
       title: '注意',
       icon: <ExclamationCircleOutlined />,
@@ -143,7 +154,7 @@ const QuestionCell = (props) => {
         btnList = [rev]
         break;
       case 2:
-        btnList = [edit, del]
+        // btnList = [edit, del]
         break;
       case 4:
         btnList = [del]
@@ -159,7 +170,6 @@ const QuestionCell = (props) => {
       })}
     </Menu>
   }
-  const url = useContext(QuestionCellContext)
   const normalRender = () => {
     return <div className={styles.operate}>
       <div>
@@ -168,10 +178,14 @@ const QuestionCell = (props) => {
       </div>
       <div>
         <Link type="link" to={`${url}${data.id}`}>详情</Link>
-        <Divider type="vertical" />
-        <Dropdown overlay={menuRender()} placement="bottomCenter">
+        {status !== 2 ? <Divider type="vertical" /> : null}
+        {status !== 2 ? <Dropdown overlay={menuRender()} placement="bottomCenter">
           <Button type="link">更多 <DownOutlined /></Button>
-        </Dropdown>
+        </Dropdown> : <Button type="link" onClick={() => {
+          onBtnClick('verb')
+        }}>下架 </Button>}
+
+
       </div>
     </div>
   }

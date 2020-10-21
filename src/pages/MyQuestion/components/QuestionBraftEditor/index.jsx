@@ -38,6 +38,7 @@ const QuestionBraftEditor = React.memo((props) => {
       onChange={editorChange} />
   </div>
 }, (pre, next) => {
+  console.log(pre.value)
   return pre.value === next.value
 })
 const { createEditorState } = BraftEditor
