@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { PageHeaderWrapper } from '@ant-design/pro-layout'
 import { history } from 'umi'
 import { Steps, Button, Form, Col, Select, message } from 'antd'
-import { getQuestionSubject, createQuestion } from '@/services/myQuestion/create'
+import { getQuestionSubject, createQuestion, updateQUestion } from '@/services/myQuestion/create'
 import { getQuestionDetail } from '@/services/questions/detail';
 import SubjectGroup from '../components/SubjectGroup'
 import DiffStar from '../components/DiffStar'
@@ -83,7 +83,12 @@ const MyQuestionCreate = (props) => {
       // format rich question
       const richValues = formatRichQuestion(richQuestion)
       formValues.subjectTreeNodeIds = formValues.subjectTreeNodeIds.map(x => x.lastItem)
-      createQuestion({
+      let fn = createQuestion
+      if(detail && detail.id) {
+        fn = updateQUestion
+        formValues.id = detail.id
+      }
+      fn({
         ...formValues,
         ...richValues
       }).then(res => {

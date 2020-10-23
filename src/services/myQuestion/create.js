@@ -24,6 +24,12 @@ export async function createQuestion(params) {
     data: params,
   });
 }
+export async function updateQUestion(params) {
+  return request('/v1/topic', {
+    method: 'PUT',
+    data: params,
+  });
+}
 export async function getMyQuestionList(params) {
   return request('/v1/topic/list', {
     method: 'GET',

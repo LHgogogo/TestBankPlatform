@@ -157,7 +157,7 @@ const QuestionCell = (props) => {
         // btnList = [edit, del]
         break;
       case 4:
-        btnList = [del]
+        btnList = [edit, del]
         break;
       default:
         break

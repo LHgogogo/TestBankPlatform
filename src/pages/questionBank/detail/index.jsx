@@ -355,10 +355,10 @@ const QuestionDetail = (props) => {
         if (!isWrong) btnList = [audit, reject]
         break;
       case 2:
-        btnList = [edit, del]
+        // btnList = [edit, del]
         break;
       case 4:
-        btnList = [del]
+        btnList = [edit, del]
         break;
       case 10:
       case 11:
