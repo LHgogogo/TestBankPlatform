@@ -8,6 +8,14 @@ import { deleteQuestion } from '@/services/myQuestion/create';
 import styles from './index.less'
 import { QuestionTypesDetail } from '../Enums'
 
+const CellBtnWrapper = (props) => {
+  const { btn, key = '', audits = [] } = props
+
+  return (
+    audits.indexOf(key) !== -1 ? null : btn
+  )
+}
+
 const DetailUrl = {
   person: '/questionBank/personalQuestion/detail/',
   question: '/questionBank/manage/detail/'
@@ -67,7 +75,7 @@ const statusRender = (status, reason) => {
   return <span style={style}>{statuData.title}</span>
 }
 const QuestionCell = (props) => {
-  const { data = {}, isAudit, isWrong, url } = props
+  const { data = {}, isAudit, isWrong, url, onStateChange, notAllowBtns = [] } = props
   const { question,
     difficultyLevel = 0,
     type,
@@ -122,26 +130,38 @@ const QuestionCell = (props) => {
         })
       }
     }
+    let temp = onOk
+    if (onStateChange) {
+      temp = () => {
+        return new Promise((resolve) => {
+          onOk().then(r => {
+            onStateChange()
+            resolve()
+          })
+        })
+      }
+    }
     Modal.confirm({
       title: '注意',
       icon: <ExclamationCircleOutlined />,
       content: title,
       okText: '确认',
       cancelText: '取消',
-      onOk
+      onOk: temp
     })
   }
   const menuRender = () => {
-    const edit = <Button key="edit" type='link'>
+
+    const edit = notAllowBtns.indexOf('edit') !== -1 ? null : <Button key="edit" type='link'>
       <Link to={`/questionBank/personalQuestion/edit/${data.id}`}>编辑</Link>
     </Button>
-    const sub = <Button key="sub" type='link' onClick={() => {
+    const sub = notAllowBtns.indexOf('sub') !== -1 ? null : <Button key="sub" type='link' onClick={() => {
       onBtnClick('sub')
     }}>提交审核</Button>
-    const rev = <Button key="rev" type='link' onClick={() => {
+    const rev = notAllowBtns.indexOf('rev') !== -1 ? null : <Button key="rev" type='link' onClick={() => {
       onBtnClick('rev')
     }}>撤回审核</Button>
-    const del = <Button key="del" type='link' style={{ color: 'red' }} onClick={() => {
+    const del = notAllowBtns.indexOf('del') !== -1 ? null : <Button key="del" type='link' style={{ color: 'red' }} onClick={() => {
       onBtnClick('del')
     }}>删除</Button>
     let btnList = []
@@ -154,7 +174,7 @@ const QuestionCell = (props) => {
         btnList = [rev]
         break;
       case 2:
-        // btnList = [edit, del]
+        btnList = [edit, del]
         break;
       case 4:
         btnList = [edit, del]
@@ -170,6 +190,11 @@ const QuestionCell = (props) => {
       })}
     </Menu>
   }
+  const verbRender = () => {
+    return notAllowBtns.indexOf('verb') !== -1 ? null : <Button type="link" onClick={() => {
+      onBtnClick('verb')
+    }}>下架 </Button>
+  }
   const normalRender = () => {
     return <div className={styles.operate}>
       <div>
@@ -181,11 +206,7 @@ const QuestionCell = (props) => {
         {status !== 2 ? <Divider type="vertical" /> : null}
         {status !== 2 ? <Dropdown overlay={menuRender()} placement="bottomCenter">
           <Button type="link">更多 <DownOutlined /></Button>
-        </Dropdown> : <Button type="link" onClick={() => {
-          onBtnClick('verb')
-        }}>下架 </Button>}
-
-
+        </Dropdown> : verbRender()}
       </div>
     </div>
   }

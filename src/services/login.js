@@ -9,7 +9,7 @@ export async function fakeAccountLogin(params) {
 export async function getCaptcha(params) {
   return request('/v1/captcha/generate', {
     method: 'GET',
-    data: params,
+    params
   });
 }
 export async function getMobileCaptcha(params) {

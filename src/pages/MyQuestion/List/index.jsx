@@ -107,6 +107,12 @@ const MyQuestion = (props) => {
             ...query,
             queryType: 1
           }}
+          // edit
+          // sub
+          // rev
+          // del
+          // verb
+          notAllowBtns={['verb', 'rev']}
           detailUrl="/questionBank/personalQuestion/detail/"
         />
 

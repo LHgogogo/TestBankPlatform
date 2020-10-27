@@ -3,7 +3,7 @@ import request from '@/utils/request';
 export async function getDataAnalysisCount(params) {
   return request('/v1/dataAnalysis/operates/count', {
     method: 'GET',
-    data: {
+    params: {
       ...params,
     },
   });

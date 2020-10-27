@@ -96,11 +96,11 @@ const WrongQuestion = (props) => {
     label: '待审核'
   },
   {
-    value: '10',
+    value: '2',
     label: '通过'
   },
   {
-    value: '11',
+    value: '3',
     label: '未通过'
   }]
   const [query, setQuery] = useState({ status: 1 })

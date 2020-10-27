@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
-import { Button, Divider, Checkbox, Radio } from 'antd'
+import React, { useState, useCallback } from 'react'
+import { Button, Divider, Checkbox, Radio, Input } from 'antd'
 import { QuestionBraftEditor, createEditorState } from '../QuestionBraftEditor'
 import styles from './index.less'
+
 
 const alphabet = [
   'A',
@@ -54,16 +55,17 @@ const questionType = [
 ]
 const OneOption = React.memo((props) => {
   const { value, onChange, title, onDelete } = props
-  const onQuestionChange = (input) => {
+  const onOneQuestionChange = (input) => {
     if (onChange) onChange(input)
   }
   return <div className={styles.option}>
     <div className={styles.title}>{title}</div>
     <div className={styles.richBlock}>
       <QuestionBraftEditor
+        editKey="question"
         className={styles.input}
         value={value}
-        onChange={onQuestionChange} />
+        onChange={onOneQuestionChange} />
     </div>
     <Button className={styles.right} onClick={onDelete}>删除</Button>
   </div>
@@ -84,25 +86,26 @@ const showChoose = (type) => {
   return false
 }
 const RichQuestion = React.memo((props) => {
+  console.log('RichQuestion', props.value)
   const { type,
-    value = {},
-    value: {
-      question = createEditorState(''),
-      options = [],
-      answer = undefined,
-      analysis = createEditorState('')
-    },
+    value,
     onChange } = props
+  const {
+    question = createEditorState(''),
+    options = [],
+    answer = undefined,
+    analysis = createEditorState('')
+  } = value
   const currentType = findQuestionType(type)
   const onChangeValue = (target, key) => {
     if (onChange) onChange({
-      ...value,
+      ...props.value,
       [key]: target
     })
   }
-  const onQuestionChange = (input) => {
+  const onQuestionChange = useCallback((input) => {
     onChangeValue(input, 'question')
-  }
+  })
   const onAddChoose = () => {
     onChangeValue([...options, {
       value: createEditorState(''),
@@ -163,7 +166,7 @@ const RichQuestion = React.memo((props) => {
           onChange={onAnswerSelect}
           value={answer || []}
           options={options.map((x, index) => {
-            return { label: `选项${alphabet[index]}`, value: alphabet[index] }
+            return { label: `选项${alphabet[index]}`, value: alphabet[index], key: `选项${alphabet[index]}` }
           })} />}
 
 

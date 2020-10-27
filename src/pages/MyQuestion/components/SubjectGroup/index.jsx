@@ -70,6 +70,7 @@ const SubjectGroup = (props) => {
   }
   return <div className={styles.subjectGroup}>
     {value.map((x, index) => <CascaderInLine
+      key={new Date()}
       title="科目课程"
       data={data}
       value={x}

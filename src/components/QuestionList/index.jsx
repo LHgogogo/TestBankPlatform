@@ -4,15 +4,15 @@ import { getMyQuestionList } from '@/services/myQuestion/create'
 import { QuestionCell, QuestionCellContext } from '../QuestionCell'
 import styles from './index.less'
 
-const useList = (query, pageNum, pageSize, modifyRequest) => {
+const useList = (query, page, modifyRequest) => {
   const [list, setList] = useState([])
   const [totalN, setTotalN] = useState(0)
   useEffect(() => {
     const fn = modifyRequest || getMyQuestionList
     fn({
       ...query,
-      pageSize,
-      pageNum
+      pageSize: page.pageSize,
+      pageNum: page.pageNum
     })
       .then(res => {
         if (res.code < 300) {
@@ -23,32 +23,42 @@ const useList = (query, pageNum, pageSize, modifyRequest) => {
         return Promise.reject(res.message)
       })
       .then(msg => message.error(msg))
-  }, [pageSize, pageNum, query])
+  }, [page, query])
   return [list, totalN]
 }
 const QuestionList = (props) => {
-  const { query = {}, detailUrl, modifyRequest, isAudit, isWrong } = props
-  const [pageNum, setPageNum] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const { query = {}, detailUrl, modifyRequest, isAudit, isWrong, notAllowBtns } = props
+  const [page, setPage] = useState({
+    pageNum: 1,
+    pageSize: 10
+  })
 
 
   const onPageChange = (num, size) => {
-    setPageNum(num)
-    setPageSize(size)
+    setPage({
+      pageNum: num,
+      pageSize: size
+    })
+  }
+  const stateChange = () => {
+    setPage({
+      pageNum: 1,
+      pageSize: page.pageSize || 10
+    })
   }
 
-  const [list, total] = useList(query, pageNum, pageSize, modifyRequest)
+  const [list, total] = useList(query, page, modifyRequest)
   return <div className={styles.questionTable}>
     <QuestionCellContext.Provider >
       <div className={styles.list}>
         {
           list.map(record => {
-            return <QuestionCell url={detailUrl} key={record.id} data={record} isAudit={isAudit} isWrong={isWrong} />
+            return <QuestionCell notAllowBtns={notAllowBtns} url={detailUrl} key={record.id} data={record} isAudit={isAudit} isWrong={isWrong} onStateChange={stateChange}/>
           })
         }
       </div>
     </QuestionCellContext.Provider>
-    {total < pageSize
+    {total < page.pageSize
       ? null
       : <Pagination
         size="small"

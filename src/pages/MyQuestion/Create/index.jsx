@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { PageHeaderWrapper } from '@ant-design/pro-layout'
 import { history } from 'umi'
 import { Steps, Button, Form, Col, Select, message } from 'antd'
 import { getQuestionSubject, createQuestion, updateQUestion } from '@/services/myQuestion/create'
 import { getQuestionDetail } from '@/services/questions/detail';
+import { isEmpty } from 'lodash'
+import { ConsoleSqlOutlined } from '@ant-design/icons'
 import SubjectGroup from '../components/SubjectGroup'
 import DiffStar from '../components/DiffStar'
 import TagsSelect from '../components/TagsSelect'
 import { RichQuestion, questionType, alphabet, createEditorState } from '../components/RichQuestion'
 import styles from './index.less'
+
 
 const { Step } = Steps
 const { Option } = Select
@@ -35,24 +38,28 @@ const useSubjectTreeData = (setLoading) => {
   }, [])
   return treeData
 }
-const useRichQuestion = (detail) => {
-  const [richQuestion, setRichQuestion] = useState({})
+const useRichQuestion = (detail, set) => {
+
   useEffect(() => {
+    if (isEmpty(detail)) {
+      return
+    }
     const { analysis = '', answer = '', options = [], question = '', type } = detail
     const htmls = options.map(x => {
+
       return {
         value: createEditorState(x.split(' ')[1]),
         key: x.split(' ')[0]
       }
     })
-    setRichQuestion({
+    console.log(11111111)
+    set({
       analysis: analysis && createEditorState(analysis),
       answer: (type === '2' || type === '4') ? answer.split(',') : answer,
       options: htmls,
       question: question && createEditorState(question)
     })
   }, [detail])
-  return [richQuestion, setRichQuestion]
 }
 const steps = [{ title: '填写题目信息' }, { title: '填写题目内容' }]
 const formatRichQuestion = (rich) => {
@@ -73,7 +80,9 @@ const MyQuestionCreate = (props) => {
   const detail = useQuestionDetail(params, form)
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [richQuestion, setRichQuestion] = useRichQuestion(detail)
+  const [richQuestion, setRichQuestion] = useState({})
+  useRichQuestion(detail, setRichQuestion)
+
 
   const treeData = useSubjectTreeData(setLoading)
   const [formValues, setFormValues] = useState({})
@@ -84,7 +93,7 @@ const MyQuestionCreate = (props) => {
       const richValues = formatRichQuestion(richQuestion)
       formValues.subjectTreeNodeIds = formValues.subjectTreeNodeIds.map(x => x.lastItem)
       let fn = createQuestion
-      if(detail && detail.id) {
+      if (detail && detail.id) {
         fn = updateQUestion
         formValues.id = detail.id
       }
@@ -108,15 +117,19 @@ const MyQuestionCreate = (props) => {
       })
     }
   }
-  const onRichQuestionChange = (input) => {
-    setRichQuestion(input)
-  }
+
+  const onRichQuestionChange = useCallback((input) => {
+    setRichQuestion({
+      ...richQuestion,
+      ...input
+    })
+  })
   const formRender = () => {
     return <Col offset={8} span={8}>
       <Form form={form}
         initialValues={{
           subjectTreeNodeIds: detail.nodeIds,
-          type: `${detail.type}`,
+          type: detail.type ? `${detail.type}` : '1',
           difficultyLevel: detail.difficultyLevel,
           tags: detail.tags,
         }} >

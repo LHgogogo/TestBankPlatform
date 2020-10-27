@@ -6,7 +6,7 @@ import styles from './index.less'
 
 
 const QuestionBraftEditor = React.memo((props) => {
-  const { value, onChange, placeholder } = props
+  const { value, onChange, placeholder, editKey = '' } = props
   console.log('render', value)
   const editorChange = (changes) => {
     if (onChange) onChange(changes)
@@ -27,6 +27,7 @@ const QuestionBraftEditor = React.memo((props) => {
   return <div className={styles.content}>
     <BraftEditor
       value={value}
+      key={editKey}
       placeholder={placeholder}
       media={{
         uploadFn: upload,
@@ -38,7 +39,7 @@ const QuestionBraftEditor = React.memo((props) => {
       onChange={editorChange} />
   </div>
 }, (pre, next) => {
-  console.log(pre.value)
+  console.log('pre',pre.value)
   return pre.value === next.value
 })
 const { createEditorState } = BraftEditor
